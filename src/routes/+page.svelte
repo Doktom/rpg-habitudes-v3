@@ -13,7 +13,10 @@
 		Orbit,
 		Plus,
 		Shield,
+		Compass,
+		HeartHandshake,
 		Sparkles,
+		X,
 		Sunrise,
 		SunMedium
 	} from '@lucide/svelte';
@@ -28,6 +31,7 @@
 	import { discipline, gaugeValue, obligationsOn, totalXp } from '#lib/engine/progress.ts';
 	import { habitStreak, habitWeekDays, habitWeekStreak, nextMilestone } from '#lib/engine/regularity.ts';
 	import { shieldOffer, shieldState } from '#lib/engine/shields.ts';
+	import { copilotTips } from '#lib/engine/copilot.ts';
 	import { danceClassesOn, habitsForDay, logsInWeek, partiesOn, routineOn, tasksForDay } from '#lib/engine/schedule.ts';
 	import { addLoot, orbit, orbitReward, sectorsLit } from '#lib/engine/ship.ts';
 	import { levelInfo } from '#lib/engine/xp.ts';
@@ -88,6 +92,13 @@
 	);
 	const dayIndex = $derived((weekday(date) + 6) % 7);
 	const shields = $derived(shieldState(data));
+	// Copilote : les deux conseils les plus utiles du jour.
+	const tips = $derived(isToday ? copilotTips(data, today()).slice(0, 2) : []);
+	const TIP_STYLE = {
+		boost: { icon: Flame, tone: 'bg-orange-100 text-orange-800' },
+		care: { icon: HeartHandshake, tone: 'bg-sky-100 text-sky-800' },
+		plan: { icon: Compass, tone: 'bg-accent-soft text-accent' }
+	} as const;
 	// Un raté récent casse une série : on propose le joker, sans jamais le dépenser à la place du joueur.
 	const offer = $derived(isToday ? shieldOffer(data, today()) : null);
 	// Le bouclier qui a servi la veille, pour le dire en arrivant le matin.
@@ -180,6 +191,24 @@
 		<p class="rounded-xl bg-sky-100 px-3 py-1.5 text-xs font-semibold text-sky-800">Jour de repos : rien n'est compté comme raté.</p>
 	{/if}
 </div>
+
+<!-- Copilote -->
+{#if tips.length}
+	<section class="mb-4 grid gap-2 {tips.length > 1 ? 'md:grid-cols-2' : ''}" aria-label="Conseils du copilote">
+		{#each tips as t (t.id)}
+			{@const st = TIP_STYLE[t.kind]}
+			<div class="card flex items-start gap-3 p-3.5">
+				<span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full {st.tone}"><st.icon size={17} strokeWidth={2.4} /></span>
+				<div class="min-w-0 flex-1">
+					<div class="text-sm font-extrabold">{t.title}</div>
+					<p class="text-xs leading-snug text-muted">{t.text}</p>
+					{#if t.action}<a href={t.action.href} class="mt-1 inline-block text-xs font-bold text-accent hover:underline">{t.action.label} →</a>{/if}
+				</div>
+				<button class="btn btn-ghost h-7 w-7 shrink-0 p-0 text-muted" onclick={() => store.dismissTip(t.id)} aria-label="Plus tard" title="Plus tard"><X size={14} /></button>
+			</div>
+		{/each}
+	</section>
+{/if}
 
 <!-- Joker : sauver une série après un raté -->
 {#if offer}
@@ -318,6 +347,7 @@
 									{#if h.frequency.type === 'weekly'}
 										{logsInWeek(data, h.id, date).length}/{h.frequency.times} cette semaine ·
 									{/if}
+									{#if h.cue && !log}<span class="font-semibold text-ink">{h.cue}</span> ·{/if}
 									{log ? h.tiers[log.tier] : minimumMode ? h.tiers.min : h.tiers.normal}
 									{#if log?.session}· {log.session}{/if}
 								</div>

@@ -10,12 +10,14 @@
 		Pencil,
 		Play,
 		Plus,
+		Map,
 		Rocket,
 		Skull,
 		Sparkles,
 		Trophy
 	} from '@lucide/svelte';
 	import ConfirmButton from '#lib/components/ConfirmButton.svelte';
+	import { CAMPAIGN_TEMPLATES, type CampaignTemplate } from '#lib/templates.ts';
 	import LootLine from '#lib/components/LootLine.svelte';
 	import TaskCheck from '#lib/components/TaskCheck.svelte';
 	import { LOOT_REWARDS, XP_REWARDS } from '#lib/config.ts';
@@ -34,6 +36,14 @@
 	let questForm = $state<{ chapterId: string; name: string; xp: number; boss: boolean } | null>(null);
 	let taskDraft = $state<Record<string, string>>({});
 	let showDone = $state(false);
+	let showTemplates = $state(false);
+
+	function useTemplate(tpl: CampaignTemplate) {
+		const c = store.addCampaignFromTemplate(tpl);
+		showTemplates = false;
+		toasts.push({ title: `Cap sur : ${c.name}` });
+		open(c.id);
+	}
 
 	const STATUS: Record<CampaignStatus, { label: string; style: string }> = {
 		active: { label: 'En route', style: 'bg-accent-soft text-accent' },
@@ -261,12 +271,33 @@
 			</div>
 		</form>
 	{:else}
-		<button
-			class="btn btn-primary mb-5"
-			onclick={() => (newCampaign = { id: uid(), name: '', intent: '', domainId: data.domains[0]?.id ?? 'projets', status: 'active', chapters: [] })}
-		>
-			<Plus size={16} strokeWidth={2.6} /> Nouvelle campagne
-		</button>
+		<div class="mb-5 flex flex-wrap gap-2">
+			<button
+				class="btn btn-primary"
+				onclick={() => (newCampaign = { id: uid(), name: '', intent: '', domainId: data.domains[0]?.id ?? 'projets', status: 'active', chapters: [] })}
+			>
+				<Plus size={16} strokeWidth={2.6} /> Nouvelle campagne
+			</button>
+			<button class="btn" aria-expanded={showTemplates} onclick={() => (showTemplates = !showTemplates)}><Map size={15} /> Partir d'un modèle</button>
+		</div>
+	{/if}
+
+	{#if showTemplates && !newCampaign}
+		<section class="mb-6">
+			<p class="mb-2 px-1 text-xs text-muted">Des routes toutes tracées, avec leurs étapes, leurs quêtes et un boss final. Tout reste modifiable ensuite.</p>
+			<div class="grid gap-3 md:grid-cols-2">
+				{#each CAMPAIGN_TEMPLATES as tpl (tpl.key)}
+					{@const quests = tpl.chapters.reduce((s, ch) => s + ch.quests.length, 0)}
+					<div class="card flex flex-col gap-2">
+						<div class="eyebrow flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:{tpl.domain.color}"></span>{tpl.domain.name}</div>
+						<div class="text-lg font-extrabold">{tpl.name}</div>
+						<p class="text-sm text-muted">{tpl.intent}</p>
+						<p class="text-xs font-semibold text-muted">{tpl.chapters.length} étapes · {quests} quêtes · environ {tpl.weeks} semaines</p>
+						<button class="btn mt-auto self-start text-xs" onclick={() => useTemplate(tpl)}><Rocket size={13} /> Mettre le cap</button>
+					</div>
+				{/each}
+			</div>
+		</section>
 	{/if}
 
 	{#if active.length}

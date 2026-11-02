@@ -110,6 +110,7 @@
 	let worked = $state('');
 	let stuck = $state('');
 	let adjust = $state('');
+	let plan = $state('');
 	let priorities = $state(['', '', '']);
 	let focusQuest = $state('');
 	const draftKey = $derived(`rpg-habitudes-v3:revue:${weekStart}`);
@@ -117,14 +118,14 @@
 	onMount(() => {
 		try {
 			const d = JSON.parse(localStorage.getItem(draftKey) ?? 'null');
-			if (d) ({ step, worked, stuck, adjust, priorities, focusQuest } = { ...{ step, worked, stuck, adjust, priorities, focusQuest }, ...d });
+			if (d) ({ step, worked, stuck, adjust, plan, priorities, focusQuest } = { ...{ step, worked, stuck, adjust, plan, priorities, focusQuest }, ...d });
 		} catch {
 			// pas de brouillon lisible
 		}
 	});
 
 	$effect(() => {
-		const draft = { step, worked, stuck, adjust, priorities, focusQuest };
+		const draft = { step, worked, stuck, adjust, plan, priorities, focusQuest };
 		try {
 			localStorage.setItem(draftKey, JSON.stringify(draft));
 		} catch {
@@ -151,6 +152,7 @@
 				worked,
 				stuck,
 				adjust,
+				plan: plan.trim() || undefined,
 				priorities: kept,
 				snapshot: { xp, discipline: discipline(data, today()), motivation: gaugeValue(data, 'motivation'), inspiration: gaugeValue(data, 'inspiration'), successRate: rate }
 			});
@@ -166,7 +168,7 @@
 			// rien à nettoyer
 		}
 		step = 0;
-		worked = stuck = adjust = focusQuest = '';
+		worked = stuck = adjust = plan = focusQuest = '';
 		priorities = ['', '', ''];
 	}
 
@@ -310,6 +312,8 @@
 						<textarea id="q-{q.id}" class="input min-h-20" placeholder={q.hint} bind:value={worked}></textarea>
 					{:else if q.id === 'stuck'}
 						<textarea id="q-{q.id}" class="input min-h-20" placeholder={q.hint} bind:value={stuck}></textarea>
+						<label class="label mt-1" for="q-plan">Si cet obstacle revient, alors je…</label>
+						<input id="q-plan" class="input" placeholder="ex. Si je rentre tard, alors je fais juste le minimum avant le dîner" bind:value={plan} />
 					{:else}
 						<textarea id="q-{q.id}" class="input min-h-20" placeholder={q.hint} bind:value={adjust}></textarea>
 					{/if}
@@ -451,6 +455,7 @@
 							<div><dt class="label">Ce qui a marché</dt><dd class="whitespace-pre-line">{r.worked || '—'}</dd></div>
 							<div><dt class="label">Ce qui a coincé</dt><dd class="whitespace-pre-line">{r.stuck || '—'}</dd></div>
 							<div><dt class="label">Ce que j'ajuste</dt><dd class="whitespace-pre-line">{r.adjust || '—'}</dd></div>
+							{#if r.plan}<div><dt class="label">Si… alors…</dt><dd class="whitespace-pre-line">{r.plan}</dd></div>{/if}
 							<div><dt class="label">Priorités</dt><dd>{r.priorities.join(' · ') || '—'}</dd></div>
 						</dl>
 					</details>

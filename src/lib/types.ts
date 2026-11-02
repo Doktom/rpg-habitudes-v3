@@ -54,6 +54,7 @@ export interface Habit {
 	tiers: Record<Tier, string>;
 	moment: Moment;
 	slot?: Time; // créneau par défaut dans l'agenda
+	cue?: string; // déclencheur « quand / après… » (intention de mise en œuvre), ex. « Après le café du matin »
 	difficulty: Difficulty;
 	domains: DomainShare[];
 	campaignId?: string;
@@ -169,6 +170,7 @@ export interface Review {
 	worked: string;
 	stuck: string;
 	adjust: string;
+	plan?: string; // « Si … alors je … » : la parade prévue pour l'obstacle de la semaine
 	priorities: string[];
 	snapshot: { xp: number; discipline: number; motivation: number; inspiration: number; successRate: number };
 }
@@ -226,6 +228,7 @@ export interface AppData {
 	minimumModeDays: ISODate[];
 	shieldedDays: ISODate[]; // jours ratés protégés par un bouclier de série
 	shieldDeclined: ISODate[]; // jours ratés pour lesquels l'utilisateur a choisi de ne pas utiliser de bouclier
+	dismissedTips: string[]; // conseils du copilote écartés, « <id>:<date> »
 	lastProcessedDay?: ISODate;
 	ship: { modules: Partial<Record<ModuleId, number>> }; // niveaux des modules du vaisseau
 	skills: Partial<Record<SkillId, number>>; // niveaux des compétences du pilote

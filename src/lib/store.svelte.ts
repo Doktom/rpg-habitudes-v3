@@ -11,6 +11,7 @@ import { uid } from './id';
 import { seed, withDefaults } from './seed';
 import { autoPlay, buildScenario, validateDay } from './testmode';
 import { toasts } from './toasts.svelte';
+import { campaignFromTemplate, habitFromIdea, type CampaignTemplate, type HabitIdea } from './templates';
 import { SHIP_MODULES, SKILLS } from './universe';
 import type {
 	AppData,
@@ -257,6 +258,26 @@ export class Store {
 		this.persist();
 	}
 
+	// Ajoute une habitude du catalogue (en bonus, avec son déclencheur) et sa catégorie si besoin.
+	addHabitIdea(idea: HabitIdea): Habit {
+		const { habit, domain } = habitFromIdea(idea, this.data.domains, today());
+		if (domain) this.data.domains.push(domain);
+		this.data.habits.push(habit);
+		this.persist();
+		return habit;
+	}
+
+	// --- Copilote ---
+
+	dismissTip(id: string, date: ISODate = today()) {
+		const key = `${id}:${date}`;
+		// On ne garde que les conseils écartés de la semaine écoulée.
+		const since = addDays(date, -7);
+		this.data.dismissedTips = this.data.dismissedTips.filter((k) => k.slice(-10) >= since);
+		if (!this.data.dismissedTips.includes(key)) this.data.dismissedTips.push(key);
+		this.persist();
+	}
+
 	// --- Catégories (stats) ---
 
 	saveDomain(d: Domain) {
@@ -350,6 +371,15 @@ export class Store {
 		this.persist();
 	}
 
+	// Nouvelle campagne à partir d'un modèle (étapes et quêtes prêtes), avec sa catégorie si besoin.
+	addCampaignFromTemplate(t: CampaignTemplate): Campaign {
+		const c = campaignFromTemplate(t, today(), addDays);
+		if (!this.data.domains.some((d) => d.id === t.domain.id)) this.data.domains.push(t.domain);
+		this.data.campaigns.push(c);
+		this.persist();
+		return c;
+	}
+
 	removeCampaign(id: string) {
 		this.data.campaigns = this.data.campaigns.filter((c) => c.id !== id);
 		this.persist();
@@ -408,7 +438,7 @@ export class Store {
 				date,
 				source: `campaign:${campaign.id}`,
 				label: `Campagne terminée : ${campaign.name}`,
-				xp: [{ domainId: campaign.domainId, amount: XP_REWARDS.campaign }],
+				xp: [{ domainId: campaign.domainId, amount: bonusXp(XP_REWARDS.campaign, discipline(this.data, date)) }],
 				loot: LOOT_REWARDS.campaign,
 				gauge: { inspiration: GAUGES.inspiration.campaignDone },
 				campaignId: campaign.id

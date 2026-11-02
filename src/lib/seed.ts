@@ -1,4 +1,5 @@
-import { today } from './dates';
+import { addDays, today } from './dates';
+import { CAMPAIGN_TEMPLATES, campaignFromTemplate } from './templates';
 import type { AppData, Habit, ISODate } from './types';
 
 const tiers = (min: string, normal: string, excellent: string) => ({ min, normal, excellent });
@@ -137,6 +138,7 @@ export function seed(today: ISODate): AppData {
 		minimumModeDays: [],
 		shieldedDays: [],
 		shieldDeclined: [],
+		dismissedTips: [],
 		lastProcessedDay: undefined,
 		ship: { modules: {} },
 		skills: {},
@@ -155,65 +157,94 @@ export function withDefaults(data: AppData): AppData {
 	data.notebook ??= [];
 	data.shieldedDays ??= [];
 	data.shieldDeclined ??= [];
+	data.dismissedTips ??= [];
 	return addContent(data, today());
 }
 
 // Contenus ajoutés après coup, versés une seule fois (une habitude supprimée ensuite ne revient pas).
-const CONTENT_VERSION = 2;
+const CONTENT_VERSION = 3;
 
 export function addContent(data: AppData, date: ISODate): AppData {
-	if ((data.contentVersion ?? 1) >= CONTENT_VERSION) return data;
-	const addDomain = (d: AppData['domains'][number]) => data.domains.some((x) => x.id === d.id) || data.domains.push(d);
-	const addHabit = (h: Habit) => data.habits.some((x) => x.id === h.id) || data.habits.push(h);
-	const addList = (l: AppData['notebook'][number]) => data.notebook.some((x) => x.id === l.id) || data.notebook.push(l);
+	const version = data.contentVersion ?? 1;
+	if (version >= CONTENT_VERSION) return data;
 
-	addDomain({ id: 'culture', name: 'Lecture & culture', stat: 'Savoir', color: '#4f46e5' });
-	addDomain({ id: 'maison', name: 'Maison', stat: 'Intendance', color: '#b45309' });
-	addHabit({
-		id: 'lecture',
-		name: 'Lecture',
-		form: 'simple',
-		kind: 'bonus',
-		frequency: { type: 'daily' },
-		tiers: tiers('5 min', '10 min', '30 min'),
-		moment: 'evening',
-		difficulty: 'easy',
-		domains: [{ domainId: 'culture', weight: 100 }],
-		createdAt: date
-	});
-	addHabit({
-		id: 'menage',
-		name: 'Ménage express',
-		form: 'simple',
-		kind: 'bonus',
-		frequency: { type: 'daily' },
-		tiers: tiers('5 min de rangement', '15 min de ménage', "Une pièce à fond"),
-		moment: 'day',
-		difficulty: 'easy',
-		domains: [{ domainId: 'maison', weight: 100 }],
-		createdAt: date
-	});
-	addHabit({
-		id: 'air',
-		name: "Prendre l'air",
-		form: 'simple',
-		kind: 'bonus',
-		frequency: { type: 'daily' },
-		tiers: tiers('5 min dehors', '20 min de marche', '1 h dehors'),
-		moment: 'day',
-		difficulty: 'easy',
-		domains: [{ domainId: 'bienetre', weight: 100 }],
-		createdAt: date
-	});
+	if (version < 2) {
+		const addDomain = (d: AppData['domains'][number]) => data.domains.some((x) => x.id === d.id) || data.domains.push(d);
+		const addHabit = (h: Habit) => data.habits.some((x) => x.id === h.id) || data.habits.push(h);
+		const addList = (l: AppData['notebook'][number]) => data.notebook.some((x) => x.id === l.id) || data.notebook.push(l);
 
-	const list = (id: string, name: string, icon: string, color: string) =>
-		addList({ id, name, kind: 'list', icon, color, items: [], createdAt: date });
-	list('nb-courses', 'Courses', 'cart', '#16a34a');
-	list('nb-deco', 'Déco à acheter', 'sofa', '#b45309');
-	list('nb-essayer', 'À essayer', 'sparkles', '#9333ea');
-	list('nb-visiter', 'À visiter', 'pin', '#0284c7');
-	list('nb-livres', 'Livres à lire', 'book', '#4f46e5');
-	addList({ id: 'nb-penser', name: 'À penser', kind: 'note', icon: 'bulb', color: '#e11d48', items: [], body: '', createdAt: date });
+		addDomain({ id: 'culture', name: 'Lecture & culture', stat: 'Savoir', color: '#4f46e5' });
+		addDomain({ id: 'maison', name: 'Maison', stat: 'Intendance', color: '#b45309' });
+		addHabit({
+			id: 'lecture',
+			name: 'Lecture',
+			form: 'simple',
+			kind: 'bonus',
+			frequency: { type: 'daily' },
+			tiers: tiers('5 min', '10 min', '30 min'),
+			moment: 'evening',
+			difficulty: 'easy',
+			domains: [{ domainId: 'culture', weight: 100 }],
+			createdAt: date
+		});
+		addHabit({
+			id: 'menage',
+			name: 'Ménage express',
+			form: 'simple',
+			kind: 'bonus',
+			frequency: { type: 'daily' },
+			tiers: tiers('5 min de rangement', '15 min de ménage', "Une pièce à fond"),
+			moment: 'day',
+			difficulty: 'easy',
+			domains: [{ domainId: 'maison', weight: 100 }],
+			createdAt: date
+		});
+		addHabit({
+			id: 'air',
+			name: "Prendre l'air",
+			form: 'simple',
+			kind: 'bonus',
+			frequency: { type: 'daily' },
+			tiers: tiers('5 min dehors', '20 min de marche', '1 h dehors'),
+			moment: 'day',
+			difficulty: 'easy',
+			domains: [{ domainId: 'bienetre', weight: 100 }],
+			createdAt: date
+		});
+
+		const list = (id: string, name: string, icon: string, color: string) =>
+			addList({ id, name, kind: 'list', icon, color, items: [], createdAt: date });
+		list('nb-courses', 'Courses', 'cart', '#16a34a');
+		list('nb-deco', 'Déco à acheter', 'sofa', '#b45309');
+		list('nb-essayer', 'À essayer', 'sparkles', '#9333ea');
+		list('nb-visiter', 'À visiter', 'pin', '#0284c7');
+		list('nb-livres', 'Livres à lire', 'book', '#4f46e5');
+		addList({ id: 'nb-penser', name: 'À penser', kind: 'note', icon: 'bulb', color: '#e11d48', items: [], body: '', createdAt: date });
+	}
+
+	// v3 : un déclencheur pour les habitudes de départ, et des quêtes pour la campagne Trading restée vide.
+	if (version < 3) {
+		const cues: Record<string, string> = {
+			reveil: 'Au saut du lit',
+			'kine-matin': 'Après le réveil musculaire',
+			'kine-soir': 'Avant de me coucher',
+			'mini-seance': 'En rentrant du travail',
+			'trading-analyse': 'À la clôture du marché',
+			lecture: 'Au lit, avant d’éteindre',
+			menage: 'Après le dîner',
+			air: 'Pendant la pause du midi'
+		};
+		for (const h of data.habits) if (!h.cue && cues[h.id]) h.cue = cues[h.id];
+		const trading = data.campaigns.find((c) => c.id === 'camp-trading');
+		const model = CAMPAIGN_TEMPLATES.find((t) => t.key === 'trading-process');
+		if (trading && model && trading.chapters.every((ch) => ch.quests.length === 0)) {
+			const filled = campaignFromTemplate(model, date, addDays);
+			for (const ch of trading.chapters) {
+				const same = filled.chapters.find((x) => x.name === ch.name);
+				if (same) ch.quests = same.quests;
+			}
+		}
+	}
 
 	data.contentVersion = CONTENT_VERSION;
 	return data;

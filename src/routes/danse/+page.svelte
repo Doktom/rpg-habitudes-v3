@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AudioLines } from '@lucide/svelte';
 	import ConfirmButton from '#lib/components/ConfirmButton.svelte';
 	import { addDays, formatLong, formatShort, range, today, WEEKDAYS } from '#lib/dates.ts';
 	import { onVacation, upcomingParties } from '#lib/engine/schedule.ts';
@@ -45,10 +46,11 @@
 	}
 </script>
 
-<h1 class="mb-1 text-xl font-bold">Danse</h1>
-<p class="mb-5 text-sm text-zinc-500">
-	Cours fixes chaque semaine (hors vacances) et soirées ponctuelles. Ils apparaissent dans Aujourd'hui et le Planning.
-</p>
+<header class="mb-5">
+	<div class="eyebrow mb-1 flex items-center gap-1.5 text-accent"><AudioLines size={13} strokeWidth={2.4} /> Rythme galactique</div>
+	<h1 class="text-3xl font-black tracking-tight">Danse</h1>
+	<p class="text-sm text-muted">Cours fixes chaque semaine (hors vacances) et soirées ponctuelles. Ils apparaissent dans Aujourd'hui et le Planning.</p>
+</header>
 
 <section class="mb-6">
 	<div class="mb-2 flex items-center justify-between">
@@ -60,7 +62,7 @@
 			<div class="card flex flex-wrap items-center justify-between gap-2">
 				<div>
 					<div class="font-medium">{DANCE_LABEL[c.style]} · {WEEKDAYS[c.weekday]} {c.time}</div>
-					<div class="text-xs text-zinc-500">
+					<div class="text-xs text-muted">
 						{c.durationMin} min{c.place ? ' · ' + c.place : ''} · {c.kind === 'obligatory' ? 'obligatoire' : 'bonus'}
 					</div>
 				</div>
@@ -70,7 +72,7 @@
 				</div>
 			</div>
 		{:else}
-			<p class="text-sm text-zinc-500">Aucun cours fixe. Ajoute tes cours de salsa, bachata et kizomba.</p>
+			<p class="text-sm text-muted">Aucun cours fixe. Ajoute tes cours de salsa, bachata et kizomba.</p>
 		{/each}
 	</div>
 
@@ -131,7 +133,7 @@
 							{formatShort(n.d)} · {DANCE_LABEL[n.c.style]} {n.c.time}
 						</span>
 						{#if n.vacation}
-							<span class="text-xs text-zinc-500">vacances</span>
+							<span class="text-xs text-muted">vacances</span>
 						{:else}
 							<button class="btn px-2 py-0.5 text-xs" onclick={() => store.toggleCancelled(n.c.id, n.d)}>
 								{n.cancelled ? 'Rétablir' : 'Annuler'}
@@ -154,7 +156,7 @@
 			<div class="card flex flex-wrap items-center justify-between gap-2">
 				<div>
 					<div class="font-medium">{v.label || 'Vacances'}</div>
-					<div class="text-xs text-zinc-500">du {formatShort(v.start)} au {formatShort(v.end)}</div>
+					<div class="text-xs text-muted">du {formatShort(v.start)} au {formatShort(v.end)}</div>
 				</div>
 				<div class="flex gap-2">
 					<button class="btn text-xs" onclick={() => (vacationForm = clone(v))}>Modifier</button>
@@ -162,7 +164,7 @@
 				</div>
 			</div>
 		{:else}
-			<p class="text-sm text-zinc-500">Aucune période. Les cours fixes sont suspendus pendant les vacances, sans effet sur les jauges.</p>
+			<p class="text-sm text-muted">Aucune période. Les cours fixes sont suspendus pendant les vacances, sans effet sur les jauges.</p>
 		{/each}
 	</div>
 	{#if vacationForm}
@@ -204,7 +206,7 @@
 			<div class="card flex flex-wrap items-center justify-between gap-2">
 				<div>
 					<div class="font-medium capitalize">{formatLong(p.date)} · {p.time}</div>
-					<div class="text-xs text-zinc-500">
+					<div class="text-xs text-muted">
 						{p.styles.map((s) => DANCE_LABEL[s]).join(' / ')}{p.place ? ' · ' + p.place : ''}{p.note ? ' · ' + p.note : ''}
 					</div>
 				</div>
@@ -214,7 +216,7 @@
 				</div>
 			</div>
 		{:else}
-			<p class="text-sm text-zinc-500">Aucune soirée prévue.</p>
+			<p class="text-sm text-muted">Aucune soirée prévue.</p>
 		{/each}
 	</div>
 	{#if partyForm}
