@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import { CalendarDays, CalendarRange, ChevronDown, ClockAlert, ListChecks, Plus, Sun, Telescope, Trash, X } from '@lucide/svelte';
 	import ConfirmButton from '#lib/components/ConfirmButton.svelte';
 	import LootLine from '#lib/components/LootLine.svelte';
@@ -107,6 +108,9 @@
 		{/each}
 	</div>
 </header>
+
+<PageHint id="taches" title="La soute à colis">Les tâches ponctuelles, rangées par horizon (aujourd'hui, semaine, mois, un jour). Elles rapportent selon leur effort, et celles de la semaine remontent dans Aujourd'hui.</PageHint>
+
 
 <!-- Ajout rapide -->
 <form class="card mb-4 flex flex-col gap-3" onsubmit={add}>

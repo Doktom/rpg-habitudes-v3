@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		AudioLines,
 		Copy,
@@ -106,6 +107,9 @@
 		}
 	}
 </script>
+
+<PageHint id="personnage" title="Ton insigne de pilote">Tes stats grandissent avec l'XP de chaque catégorie. Chaque niveau donne un point de compétence à dépenser ici.</PageHint>
+
 
 <!-- Fiche du pilote -->
 <section class="card mb-5 flex flex-col gap-5 p-5 sm:flex-row sm:items-center">

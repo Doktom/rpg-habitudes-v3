@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		Archive,
 		ArrowDown,
@@ -200,6 +201,9 @@
 		{/each}
 	</div>
 </header>
+
+<PageHint id="habitudes" title="Tes habitudes, à ta mesure">Garde en obligatoire seulement ce qui compte vraiment ; le reste en bonus rapporte toujours sans jamais pénaliser. Un déclencheur précis (« Après le café… ») aide le plus à passer à l'acte.</PageHint>
+
 
 <div class="mb-5 flex flex-wrap gap-2">
 	<button class="btn btn-primary" onclick={() => edit()}><Plus size={16} strokeWidth={2.6} /> Nouvelle habitude</button>

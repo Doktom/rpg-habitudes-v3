@@ -53,8 +53,9 @@ describe('store : habitudes et journées', () => {
 		s.unlog(log.id);
 		expect(sources('habit:')).toHaveLength(0);
 		expect(sources('reg:')).toHaveLength(0);
-		// Seul reste le trophée « Premier allumage » : un trophée ne se perd jamais.
-		expect(totalXp(s.data)).toBe(sources('trophy:').reduce((t, e) => t + (e.xp?.[0].amount ?? 0), 0));
+		// Seuls restent le trophée « Premier allumage » et la mission de bord : ni l'un ni l'autre ne se perd.
+		const kept = [...sources('trophy:'), ...sources('onboard:')];
+		expect(totalXp(s.data)).toBe(kept.reduce((t, e) => t + (e.xp?.[0].amount ?? 0), 0));
 	});
 
 	it('la journée complète tombe avec la dernière obligation, parfaite avec les bonus', () => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		ArrowRightLeft,
 		BookOpen,
@@ -180,6 +181,9 @@
 		<input class="input py-2 pl-9" placeholder="Chercher dans le carnet…" bind:value={query} aria-label="Chercher dans le carnet" />
 	</label>
 </header>
+
+<PageHint id="carnet" title="Le carnet de bord">Des listes et des notes libres (courses, idées, à essayer) qui ne rapportent rien : juste pour ne rien oublier.</PageHint>
+
 
 <!-- Les listes, en tuiles défilantes -->
 <div class="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" role="tablist" aria-label="Listes du carnet">

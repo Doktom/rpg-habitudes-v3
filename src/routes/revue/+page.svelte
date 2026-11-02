@@ -1,9 +1,11 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		Anchor,
 		ArrowLeft,
 		ArrowRight,
 		BedDouble,
+		BookOpen,
 		Check,
 		ChevronDown,
 		Feather,
@@ -21,6 +23,7 @@
 	} from '@lucide/svelte';
 	import { onMount } from 'svelte';
 	import Gauges from '#lib/components/Gauges.svelte';
+	import MonthReview from '#lib/components/MonthReview.svelte';
 	import LootLine from '#lib/components/LootLine.svelte';
 	import OrbitRing from '#lib/components/OrbitRing.svelte';
 	import { GAUGES, LOOT_REWARDS, XP_REWARDS } from '#lib/config.ts';
@@ -178,16 +181,32 @@
 		{ id: 'adjust', label: 'Ce que j’ajuste', hint: 'Un seul petit changement pour la semaine qui vient.', icon: Feather }
 	] as const;
 	let showArchive = $state(false);
+
+	// Deux revues : la semaine (amarrage au Havre) et le mois (le récit du voyage). Le lien des rappels ouvre le mois.
+	let mode = $state<'week' | 'month'>(typeof location !== 'undefined' && location.hash.includes('mois') ? 'month' : 'week');
 </script>
 
 <!-- En-tête -->
 <header class="mb-5 flex flex-wrap items-end justify-between gap-4">
 	<div>
 		<div class="eyebrow mb-1 flex items-center gap-1.5 text-accent"><Anchor size={13} strokeWidth={2.4} /> Station du Havre</div>
-		<h1 class="text-3xl font-black tracking-tight">Revue de la semaine</h1>
-		<p class="text-sm text-muted">Orbite du {formatShort(weekStart)} au {formatShort(weekEnd)} · une dizaine de minutes pour boucler la semaine et fixer le cap.</p>
+		<h1 class="text-3xl font-black tracking-tight">{mode === 'week' ? 'Revue de la semaine' : 'Le récit du mois'}</h1>
+		<p class="text-sm text-muted">
+			{#if mode === 'week'}Orbite du {formatShort(weekStart)} au {formatShort(weekEnd)} · une dizaine de minutes pour boucler la semaine et fixer le cap.
+			{:else}Ton mois raconté comme un chapitre du voyage, puis ton regard et le cap du mois suivant.{/if}
+		</p>
+		<div class="mt-3 inline-flex rounded-full border border-line bg-raised p-0.5" role="tablist" aria-label="Type de revue">
+			{#each [{ id: 'week', label: 'Semaine', icon: Anchor }, { id: 'month', label: 'Mois', icon: BookOpen }] as t (t.id)}
+				<button
+					role="tab"
+					aria-selected={mode === t.id}
+					class="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors {mode === t.id ? 'bg-accent text-on-accent' : 'text-muted hover:text-ink'}"
+					onclick={() => (mode = t.id as 'week' | 'month')}><t.icon size={13} />{t.label}</button
+				>
+			{/each}
+		</div>
 	</div>
-	{#if !done}
+	{#if !done && mode === 'week'}
 		<div class="card flex items-center gap-2 px-3 py-2 text-xs font-bold">
 			<Anchor size={15} class="text-reward" /> À l'amarrage :
 			<span class="text-accent">+{XP_REWARDS.weeklyReview} XP</span>
@@ -196,7 +215,12 @@
 	{/if}
 </header>
 
-{#if done}
+<PageHint id="revue" title="Le Havre, une fois par semaine">Le dimanche, dix minutes pour boucler l'orbite : bilan, ce qui coince, ton cap. À la fin du mois, l'onglet Mois raconte ton voyage.</PageHint>
+
+
+{#if mode === 'month'}
+	<MonthReview />
+{:else if done}
 	<section class="card mb-6 flex flex-col items-center gap-2 py-8 text-center">
 		<span class="flex h-14 w-14 items-center justify-center rounded-full bg-reward text-on-accent"><Anchor size={26} /></span>
 		<h2 class="text-xl font-black">Orbite bouclée</h2>

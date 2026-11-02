@@ -2,6 +2,32 @@
 
 Entrées les plus récentes en haut.
 
+## 2026-11-02 (soir) — V3 0.4.0 : téléphone + PC, rappels, récits, prise en main, Aujourd'hui refait
+
+**Demande** : utiliser l'app sur le téléphone (Android, Redmi) et le PC avec sauvegarde ; des notifications ; des revues mensuelles et des moments (séries, caps) racontés de façon ludique plutôt que des stats froides ; un tutoriel et un guide des premiers jours ; une page Aujourd'hui plus claire et compartimentée, dans l'univers et la charte.
+
+**Décisions**
+
+- Serveur : **Supabase gratuit** (choix de l'utilisateur), compte e-mail + mot de passe (ou lien par e-mail). Un document JSON par utilisateur (`app_state`), versionné ; écriture par `push_state` avec contrôle de révision. Fusion à trois voies (`src/lib/sync/merge.ts`) depuis la dernière version commune : ajouts et suppressions des deux côtés gardés, événements identifiés par leur source. Premier lien d'un appareil qui a déjà des données : l'utilisateur choisit (fusionner / en ligne / cet appareil).
+- Rappels : push Web (VAPID) envoyés par une fonction Supabase appelée toutes les 10 min par pg_cron ; elle lit les données synchronisées et n'envoie que s'il reste quelque chose à faire. Réglages dans les données (`settings`), donc synchronisés.
+- Récits : `engine/story.ts` (moments + chronique du mois), ton bienveillant, variantes déterministes. Les moments existants à l'import sont marqués comme vus (pas d'avalanche).
+- Prise en main : tutoriel 6 écrans, 12 missions des premiers jours récompensées (`onboard:<id>`, ne se perdent pas, comme les trophées), astuces de première visite.
+
+**Réalisé**
+
+- `src/lib/sync/` (config, merge, sync, push), `supabase/` (schema.sql, cron.sql, fonction send-reminders), `docs/supabase.md`. Clés VAPID et secret du cron générés dans `supabase/.env.local` (ignoré par git) ; clé publique dans `config.ts`. Variables `SUPABASE_URL` / `SUPABASE_KEY` lues par le workflow de déploiement.
+- PWA : manifeste, icônes (planète + vaisseau, normales et masquables), service worker (cache de la version, page hors ligne, push, clic sur notification) adapté à SvelteKit 3 (`$app/manifest`, `$app/env`).
+- Écran Réglages (compte, installation, rappels avec heures, test, prise en main, thème) ; nuage de synchro dans la barre latérale.
+- Revue : onglets Semaine / Mois ; `MonthReview` (récit, ton regard, clore le chapitre). `MomentOverlay` en plein écran. `Tutorial`, `FirstDaysGuide`, `PageHint` sur les 9 autres écrans.
+- Aujourd'hui refait : poste de pilotage (anneau de la journée `DayRing`, statut, secteurs), transmissions, guide, missions par moment repliables, colonne de bord (À faire, séries avec jauge de palier, état du vaisseau, journal replié).
+- Copilote : la suggestion de revue ne s'affiche plus pour une semaine sans activité.
+- Tests : 47 → 60 (fusion entre appareils, moments, fin de série, import sans avalanche, chronique du mois, missions). Types au vert, build au vert.
+- Vérifié dans le navigateur (dev) : tutoriel, validation d'une habitude → trophée raconté et mission réussie, Aujourd'hui à 1 280 px et 375 px sans débordement, Réglages, chronique du mois en mode test.
+
+**Pas vérifié** : service worker, installation et push (le navigateur intégré de Claude refuse les service workers) ; synchro réelle (projet Supabase pas encore créé).
+
+**Prochaine étape** : créer le projet Supabase en suivant `docs/supabase.md`, puis tester sur le Redmi : compte, installation, rappels (« Tester »), synchro PC ↔ téléphone.
+
 ## 2026-11-02 (suite) — V3 : version complète et cohérente
 
 **Demande** : analyser ce qui marche dans le suivi d'habitudes et la motivation ; faire un gros contrôle de toute l'app (tests, cohérence, tâches) ; ajouter des campagnes et des recommandations ; sortir une version pertinente, complète et bonne, dans une V3 séparée sur GitHub.

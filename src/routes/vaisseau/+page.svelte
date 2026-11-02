@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import { ArrowUp, Atom, CircleCheck, Flame, Gem, Hexagon, Lock, Mountain, Package, RadioTower, Shield, Trophy, Wind, Wrench, Zap } from '@lucide/svelte';
 	import LootLine from '#lib/components/LootLine.svelte';
 	import OrbitRing from '#lib/components/OrbitRing.svelte';
@@ -68,6 +69,9 @@
 		store.buySkill(id);
 	}
 </script>
+
+<PageHint id="vaisseau" title="Le chantier naval">Les matériaux gagnés en agissant réparent les modules : chaque niveau donne un bonus durable. Les boucliers de série se fabriquent ici aussi.</PageHint>
+
 
 <!-- Le vaisseau -->
 <section class="card mb-5 grid gap-5 overflow-hidden p-0 md:grid-cols-5">

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		ArrowLeft,
 		Check,
@@ -234,6 +235,9 @@
 			{/each}
 		</div>
 	</header>
+
+<PageHint id="campagnes" title="Tes projets au long cours">Une campagne = une destination, découpée en chapitres et en quêtes. Pars d'un modèle si tu ne sais pas par où commencer ; les boss sont les grosses étapes.</PageHint>
+
 
 	{#if newCampaign}
 		<form

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import {
 		BedDouble,
 		CalendarClock,
@@ -219,6 +220,9 @@
 		<Segmented options={VIEWS} bind:value={view} label="Vue de l'agenda" />
 	</div>
 </header>
+
+<PageHint id="planning" title="La carte des secteurs">Ta semaine vue d'en haut : clique sur un créneau pour y poser une tâche, et vérifie que la charge reste tenable.</PageHint>
+
 
 <!-- Les sept secteurs de l'orbite -->
 <div class="mb-4 grid grid-cols-7 gap-1.5" role="group" aria-label="Jours de la semaine">

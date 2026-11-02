@@ -1,6 +1,27 @@
 import { addDays, today } from './dates';
 import { CAMPAIGN_TEMPLATES, campaignFromTemplate } from './templates';
-import type { AppData, Habit, ISODate } from './types';
+import type { AppData, Habit, ISODate, Settings } from './types';
+
+// Rappels proposés par défaut ; l'utilisateur les règle dans Réglages.
+export function defaultSettings(): Settings {
+	let tz = 'Europe/Paris';
+	try {
+		tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz;
+	} catch {
+		// fuseau par défaut
+	}
+	return {
+		tz,
+		reminders: [
+			{ kind: 'morning', time: '08:00', on: true },
+			{ kind: 'day', time: '13:00', on: false },
+			{ kind: 'evening', time: '20:30', on: true },
+			{ kind: 'dayCheck', time: '21:30', on: true },
+			{ kind: 'review', time: '18:00', on: true },
+			{ kind: 'month', time: '19:00', on: true }
+		]
+	};
+}
 
 const tiers = (min: string, normal: string, excellent: string) => ({ min, normal, excellent });
 
@@ -143,7 +164,10 @@ export function seed(today: ISODate): AppData {
 		ship: { modules: {} },
 		skills: {},
 		trophies: {},
-		notebook: []
+		notebook: [],
+		settings: defaultSettings(),
+		onboarding: { startedAt: today, missions: {}, hints: [] },
+		moments: { seen: [], level: -1 }
 	};
 	return addContent(data, today);
 }
@@ -158,6 +182,12 @@ export function withDefaults(data: AppData): AppData {
 	data.shieldedDays ??= [];
 	data.shieldDeclined ??= [];
 	data.dismissedTips ??= [];
+	data.settings ??= defaultSettings();
+	data.settings.reminders ??= defaultSettings().reminders;
+	data.onboarding ??= { startedAt: today(), missions: {}, hints: [] };
+	data.onboarding.missions ??= {};
+	data.onboarding.hints ??= [];
+	data.moments ??= { seen: [], level: -1 };
 	return addContent(data, today());
 }
 

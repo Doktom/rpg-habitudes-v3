@@ -1,12 +1,14 @@
 import { DANCE_XP_DIFFICULTY, GAUGES, LOOT_REWARDS, SHIELD, SKILL_MAX_LEVEL, XP_REWARDS } from './config';
 import { addDays, range, setClock, today } from './dates';
 import { inspirationBonus, moduleLevel, skillLevel, taskBonus, tierFactor, xpBonus } from './engine/effects';
-import { actionXp, bonusXp, splitXp } from './engine/xp';
-import { closeDay, daysToClose, discipline } from './engine/progress';
+import { actionXp, bonusXp, levelInfo, splitXp } from './engine/xp';
+import { closeDay, daysToClose, discipline, totalXp } from './engine/progress';
 import { addLoot, canAfford, lootFor, materials, negate, orbit, orbitReward, scaleLoot, sectorsLit, skillPoints, upgradeCost } from './engine/ship';
 import { regularityRewards } from './engine/regularity';
 import { shieldState, streaksAtRisk } from './engine/shields';
 import { newTrophies } from './engine/trophies';
+import { newlyDone, type DeviceContext } from './engine/onboarding';
+import { moments } from './engine/story';
 import { uid } from './id';
 import { seed, withDefaults } from './seed';
 import { autoPlay, buildScenario, validateDay } from './testmode';
@@ -29,13 +31,15 @@ import type {
 	ModuleId,
 	ProgressEvent,
 	Review,
+	Settings,
 	SkillId,
 	Task,
 	Tier,
 	Vacation
 } from './types';
 
-// V0 : tout est stocké dans le navigateur (localStorage). La couche Supabase remplacera load/persist.
+// Les données vivent dans le navigateur (localStorage) ; la synchro Supabase (lib/sync) les recopie en ligne
+// et les fusionne entre appareils.
 // Le mode test a son propre stockage : les vraies données ne sont jamais touchées.
 // La V3 partage le domaine (et donc le stockage) des V0 et V2 : clés à elle, et import en lecture seule
 // des données V2 au premier lancement (ou V0 à défaut). Ne jamais écrire dans les clés des autres versions.
@@ -83,14 +87,32 @@ export class Store {
 	persist() {
 		if (this.suspended) return;
 		this.evaluateTrophies();
+		this.checkMissions();
 		this.save();
 	}
+
+	// Appelé après chaque sauvegarde (la synchro en ligne s'y abonne). Jamais en mode test.
+	onSaved: (() => void) | null = null;
 
 	private save() {
 		try {
 			localStorage.setItem(storageKey(this.testMode), JSON.stringify(this.data));
 		} catch {
 			// navigation privée : les données restent en mémoire pour la session
+		}
+		if (!this.testMode) this.onSaved?.();
+	}
+
+	// Remplace les données par celles venues d'un autre appareil (synchro), sans relancer la synchro.
+	replaceData(next: AppData) {
+		const hook = this.onSaved;
+		this.onSaved = null;
+		try {
+			this.data = withDefaults(next);
+			this.save();
+			this.rollover();
+		} finally {
+			this.onSaved = hook;
 		}
 	}
 
@@ -275,6 +297,70 @@ export class Store {
 		const since = addDays(date, -7);
 		this.data.dismissedTips = this.data.dismissedTips.filter((k) => k.slice(-10) >= since);
 		if (!this.data.dismissedTips.includes(key)) this.data.dismissedTips.push(key);
+		this.persist();
+	}
+
+	// --- Réglages ---
+
+	saveSettings(settings: Settings) {
+		this.data.settings = settings;
+		this.persist();
+	}
+
+	// --- Prise en main ---
+
+	// État de l'appareil (synchro, rappels, installation), tenu à jour par l'écran principal.
+	device: DeviceContext = { signedIn: false, subscribed: false, installed: false };
+
+	setDevice(device: DeviceContext) {
+		this.device = device;
+		if (newlyDone(this.data, device).length) this.persist();
+	}
+
+	// Verse la récompense des missions des premiers jours qui viennent d'être réussies.
+	private checkMissions() {
+		for (const m of newlyDone(this.data, this.device)) {
+			const date = today();
+			this.data.onboarding.missions[m.id] = date;
+			this.event({ date, source: `onboard:${m.id}`, label: `Mission de bord : ${m.title}`, xp: [{ domainId: '', amount: m.reward.xp }], loot: m.reward.loot });
+			if (!this.suspended) toasts.push({ title: `Mission réussie : ${m.title}`, xp: m.reward.xp, loot: m.reward.loot });
+		}
+	}
+
+	finishIntro() {
+		this.data.onboarding.introDone = today();
+		this.persist();
+	}
+
+	replayIntro() {
+		this.data.onboarding.introDone = undefined;
+		this.persist();
+	}
+
+	seeHint(key: string) {
+		if (this.data.onboarding.hints.includes(key)) return;
+		this.data.onboarding.hints.push(key);
+		this.persist();
+	}
+
+	setGuideHidden(hidden: boolean) {
+		this.data.onboarding.hidden = hidden;
+		this.persist();
+	}
+
+	// --- Moments racontés ---
+
+	// Première fois : tout ce qui existe déjà est considéré comme raconté (pas d'avalanche à l'import).
+	initMoments() {
+		if (this.data.moments.level >= 0) return;
+		this.data.moments = { seen: moments(this.data, today()).map((m) => m.key), level: levelInfo(totalXp(this.data)).level };
+		this.persist();
+	}
+
+	seeMoment(key: string) {
+		const m = this.data.moments;
+		if (!m.seen.includes(key)) m.seen.push(key);
+		if (key.startsWith('level:')) m.level = Math.max(m.level, +key.slice(6));
 		this.persist();
 	}
 

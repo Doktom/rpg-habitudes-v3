@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PageHint from '#lib/components/PageHint.svelte';
 	import { AudioLines } from '@lucide/svelte';
 	import ConfirmButton from '#lib/components/ConfirmButton.svelte';
 	import { addDays, formatLong, formatShort, range, today, WEEKDAYS } from '#lib/dates.ts';
@@ -51,6 +52,9 @@
 	<h1 class="text-3xl font-black tracking-tight">Danse</h1>
 	<p class="text-sm text-muted">Cours fixes chaque semaine (hors vacances) et soirées ponctuelles. Ils apparaissent dans Aujourd'hui et le Planning.</p>
 </header>
+
+<PageHint id="danse" title="La piste">Tes cours réguliers et tes soirées : ils apparaissent le soir dans Aujourd'hui et comptent comme des habitudes.</PageHint>
+
 
 <section class="mb-6">
 	<div class="mb-2 flex items-center justify-between">

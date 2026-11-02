@@ -98,7 +98,7 @@ export function copilotTips(data: AppData, date: ISODate): Tip[] {
 	const thisWeek = startOfWeek(date);
 	const reviewWeek = dow >= 1 && dow <= 2 ? addDays(thisWeek, -7) : thisWeek;
 	const reviewed = data.reviews.some((r) => r.type === 'weekly' && r.periodStart === reviewWeek);
-	if ((dow === 0 || dow === 1 || dow === 2) && !reviewed && data.habitLogs.some((l) => l.date >= reviewWeek)) {
+	if ((dow === 0 || dow === 1 || dow === 2) && !reviewed && data.habitLogs.some((l) => l.date >= reviewWeek && l.date <= addDays(reviewWeek, 6))) {
 		tips.push({
 			id: `review:${reviewWeek}`,
 			kind: 'plan',

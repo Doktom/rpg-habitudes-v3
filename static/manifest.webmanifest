@@ -1,0 +1,21 @@
+{
+	"name": "Le Sillage · RPG Habitudes",
+	"short_name": "Le Sillage",
+	"description": "Tes habitudes, tes projets et ton vaisseau en orbite autour de Kronos.",
+	"lang": "fr",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "portrait",
+	"background_color": "#121428",
+	"theme_color": "#121428",
+	"icons": [
+		{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+		{ "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+	],
+	"shortcuts": [
+		{ "name": "Aujourd'hui", "url": "./#/", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+		{ "name": "Revue", "url": "./#/revue", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
+	]
+}

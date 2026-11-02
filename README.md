@@ -48,7 +48,9 @@ Puis ouvrir http://localhost:5173.
 ```
 src/lib/config.ts        constantes de jeu (XP, jauges) à calibrer
 src/lib/engine/          moteur pur et testé : xp.ts, progress.ts, schedule.ts
-src/lib/store.svelte.ts  état de l'app + persistance (à remplacer par Supabase)
+src/lib/store.svelte.ts  état de l'app + persistance locale
+src/lib/sync/            synchro Supabase (fusion entre appareils) et notifications push
+supabase/                schéma SQL, fonction des rappels, cron (voir docs/supabase.md)
 src/lib/seed.ts          configuration de départ
 src/routes/              un dossier par écran
 ```

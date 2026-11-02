@@ -211,6 +211,31 @@ export interface NoteList {
 	updatedAt?: ISODate;
 }
 
+// Rappels envoyés en notification push (calculés par le serveur à partir des données synchronisées).
+// morning / day / evening : ce qui reste à faire pour ce moment ; dayCheck : bilan avant la fin de journée ;
+// review : revue du dimanche ; month : récit du mois, le dernier jour.
+export type ReminderKind = 'morning' | 'day' | 'evening' | 'dayCheck' | 'review' | 'month';
+
+export interface Reminder {
+	kind: ReminderKind;
+	time: Time;
+	on: boolean;
+}
+
+export interface Settings {
+	reminders: Reminder[];
+	tz: string; // fuseau horaire de l'utilisateur, pour envoyer les rappels à la bonne heure
+}
+
+// Prise en main : tutoriel, missions des premiers jours, astuces vues sur chaque écran.
+export interface Onboarding {
+	startedAt: ISODate;
+	introDone?: ISODate;
+	missions: Record<string, ISODate>; // mission → date de réussite (récompense versée)
+	hidden?: boolean; // guide des premiers jours replié par l'utilisateur
+	hints: string[]; // astuces d'écran déjà lues
+}
+
 export interface AppData {
 	version: 1;
 	domains: Domain[];
@@ -236,4 +261,7 @@ export interface AppData {
 	testClock?: ISODate; // mode test : date simulée
 	notebook: NoteList[]; // carnet : listes et notes libres (courses, déco, à essayer…)
 	contentVersion?: number; // contenus de départ déjà ajoutés (voir addContent dans seed.ts)
+	settings: Settings;
+	onboarding: Onboarding;
+	moments: { seen: string[]; level: number }; // moments racontés déjà montrés, dernier niveau fêté
 }

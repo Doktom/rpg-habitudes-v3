@@ -16,17 +16,17 @@ Ce dépôt (`Doktom/rpg-habitudes-v3`) est la **V3** : la V2 graphique, rendue c
 
 0. `git pull` : le travail a pu avancer sur un autre PC (voir « Travailler sur plusieurs PC »).
 1. Lire la carte mentale (voir « Carte mentale : outil de pilotage »), puis l'entrée la plus récente de `docs/journal-sessions.md` et `docs/cahier-des-charges.md`.
-2. `npm install` puis `npm test` (47 tests attendus au vert, dont les parcours de bout en bout de `src/lib/store.test.ts`) et `npm run dev`.
+2. `npm install` puis `npm test` (60 tests attendus au vert, dont les parcours de bout en bout de `src/lib/store.test.ts`) et `npm run dev`.
 3. Si le doc partagé Claude Docs n'est pas accessible, `docs/cahier-des-charges.md` fait foi.
 
-**État au 02/11/2026 (V3, version 0.3.0)** : tous les écrans sont au système de design (Habitudes refait, Danse aligné) ; régularité récompensée, boucliers de série au choix, Carnet ; copilote de recommandations sur Aujourd'hui ; déclencheurs d'habitudes ; catalogue d'habitudes à essayer ; 7 modèles de campagnes ; « si… alors… » dans la revue. Aujourd'hui met l'action d'abord (copilote, joker, journée, habitudes, tâches), l'orbite et les jauges ensuite.
+**État au 02/11/2026 (V3, version 0.4.0)** : synchro Supabase (compte e-mail, fusion à trois voies `src/lib/sync/`), PWA installable (manifeste, service worker `src/service-worker.ts`), rappels push (fonction `supabase/functions/send-reminders`), revue mensuelle racontée et moments racontés (`engine/story.ts`), tutoriel + guide des premiers jours + astuces d'écran (`engine/onboarding.ts`), écran Réglages, Aujourd'hui refait en tableau de bord compartimenté. **Supabase reste à créer côté utilisateur** : suivre `docs/supabase.md` (les secrets générés sont dans `supabase/.env.local`, ignoré par git, sur le PC de préparation). Avant : tous les écrans sont au système de design (Habitudes refait, Danse aligné) ; régularité récompensée, boucliers de série au choix, Carnet ; copilote de recommandations sur Aujourd'hui ; déclencheurs d'habitudes ; catalogue d'habitudes à essayer ; 7 modèles de campagnes ; « si… alors… » dans la revue. Aujourd'hui met l'action d'abord (copilote, joker, journée, habitudes, tâches), l'orbite et les jauges ensuite.
 
 **Prochaines étapes, par ordre de priorité**
 
 1. Usage réel de la V3 quelques semaines, puis calibrage (`REGULARITY`, `SHIELD`, règles du copilote) et retours à reporter ici.
-2. Supabase : auth + tables du modèle de données, en remplacement de `load`/`persist` dans `store.svelte.ts` ; synchro entre téléphone et PC.
-3. PWA installable + rappels au moment du déclencheur choisi, revue du dimanche.
-4. Revue mensuelle (point campagnes, évolution des stats, arc du mois), vue mois du planning.
+2. Créer le projet Supabase (`docs/supabase.md`), mettre `SUPABASE_URL` / `SUPABASE_KEY` en variables du dépôt, vérifier sur le téléphone : installation, service worker hors ligne, rappels (le navigateur intégré de Claude ne gère pas les service workers).
+3. Rappels au moment du déclencheur de chaque habitude (aujourd'hui : par moment de la journée), plage silencieuse.
+4. Vue mois du planning ; point campagne par campagne dans la revue mensuelle.
 5. Pistes de `docs/recherche-motivation.md` : titres du pilote gagnés par les séries, petites trouvailles surprises, Élan, mode guidé des routines avec minuteur, intégration de l'app salle.
 
 Questions encore ouvertes : nom de l'app et des stats, habitudes de trading détaillées, chapitres réels des campagnes Trading et Maison, stack de l'app salle.
@@ -40,7 +40,7 @@ L'utilisateur travaille sur plusieurs PC. GitHub est la seule source de vérité
 - Un travail inachevé se pousse quand même, sur une branche, en le signalant dans le journal.
 - Premier lancement sur un nouveau PC : `git clone https://github.com/Doktom/rpg-habitudes-v3.git`, puis Node.js 22+ et `npm install`. Éviter de cloner dans un dossier synchronisé (OneDrive) : la synchro de `.git` et `node_modules` peut créer des conflits.
 - Pour reprendre avec Claude : ouvrir une session dans le dossier cloné et dire « reprenons le travail sur ce projet ». Claude lit ce fichier, puis l'entrée la plus récente de `docs/journal-sessions.md` (ce qui est fait, ce qui reste), le cahier des charges et `docs/recherche-motivation.md`.
-- Vérifier ensuite : `npm test` (47 tests au vert), `npm run check`, `npm run dev`. Le serveur de dev est aussi décrit dans `.claude/launch.json` (aperçu dans le navigateur de Claude).
+- Vérifier ensuite : `npm test` (60 tests au vert), `npm run check`, `npm run dev`. Le serveur de dev est aussi décrit dans `.claude/launch.json` (aperçu dans le navigateur de Claude).
 - La carte mentale (artifact claude.ai) n'est accessible que depuis le compte qui l'a créée ; depuis un autre compte, `docs/carte-mentale.md` fait foi.
 - Dépôts : **V3** (celui-ci) = travail en cours ; V2 (`rpg-habitudes-v2`, tag `v0.2-base`) et V0 (`rpg-habitudes`) sont figés, corrigés seulement en cas de bug.
 
@@ -87,7 +87,7 @@ La carte mentale est l'outil de pilotage du projet et l'interface d'échange ave
 ## Stack
 
 - En place (V0) : SvelteKit 3 (Svelte 5, runes), TypeScript, Tailwind 4, Vitest, adapter-static en SPA. Données en localStorage via `src/lib/store.svelte.ts`.
-- Prévu : Supabase (Postgres, Auth, RLS, Edge Functions), PWA avec Web Push.
+- Supabase (Postgres, Auth, RLS, Edge Functions + pg_cron), PWA avec Web Push : `docs/supabase.md`.
 - SvelteKit 3 : pas de `svelte.config.js`, la config passe par `sveltekit({...})` dans `vite.config.ts`. Imports internes avec `#lib/...` et l'extension explicite (`#lib/dates.ts`, `#lib/store.svelte.ts`).
 - Régularité : `src/lib/engine/regularity.ts` calcule les récompenses d'une date (journée complète, séries, semaines pleines) ; le store les recalcule de la date modifiée à aujourd'hui (`syncRegularity`, sources `reg:*`) à chaque coche ou décoche, et annonce les nouveaux gains par une notification.
 - Boucliers de série : `src/lib/engine/shields.ts` (réserve rejouée depuis le journal : gains `reg:day:*`, achats `shield:buy:*`, usages `shieldedDays`). C'est un choix du joueur : `shieldOffer` repère un raté récent (hier, avant-hier) qui casse une série, l'écran Aujourd'hui propose `store.useShield(date)` ou `store.declineShield(date)` ; jamais de dépense automatique. Un jour protégé est sauté par les séries et les semaines pleines, pas par les obligations.

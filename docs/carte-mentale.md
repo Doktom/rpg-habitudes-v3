@@ -58,11 +58,13 @@ La carte fait foi ; ce fichier est régénéré avec `node tools/carte-export.mj
   - **Écran « À faire » (todo list)** · Mécanique · En place — Ajout rapide, quatre listes, filtre, terminées repliées. Tâche détaillée : note, effort (récompense), échéance, catégorie, sous-tâches.
 - **Revue** · Module · En place
   - **Revue hebdo guidée** · Mécanique · En place — Bilan, 3 questions, 3 priorités. +50 XP, +25 Inspiration.
-  - **Revue mensuelle** · Mécanique · Prévu — Point sur chaque campagne, choix de l'arc du mois.
-- **Plateforme** · Module · Prévu
-  - **Comptes & synchro (Supabase)** · Mécanique · Prévu — Remplace le stockage navigateur ; mêmes données sur téléphone et PC.
-  - **PWA installable** · Mécanique · Prévu
-  - **Notifications** · Mécanique · Prévu — Rappels d'habitudes, revue du dimanche, alertes douces.
+  - **Revue mensuelle racontée** · Mécanique · En place — Chronique du mois en chapitres, ton regard, arc du mois suivant. +150 XP.
+  - **Moments racontés** · Mécanique · En place — Paliers, trophées, niveaux, chapitres, fin de série : en plein écran, une fois.
+- **Plateforme** · Module · En place
+  - **Comptes & synchro (Supabase)** · Mécanique · En place — Compte e-mail ; fusion à trois voies entre téléphone et PC, hors ligne compris. À configurer : docs/supabase.md.
+  - **PWA installable** · Mécanique · En place — Manifeste, icônes, service worker (hors ligne).
+  - **Notifications** · Mécanique · En place — Rappels push par moment, bilan du soir, revue du dimanche, récit du mois ; réglables.
+  - **Prise en main** · Mécanique · En place — Tutoriel, guide des premiers jours (12 missions), astuces d'écran.
   - **Habillage graphique / avatar** · Mécanique · Prévu — Après la phase sobre.
   - **Mode test (simulation de semaines)** · Mécanique · En place — Scénario généré (4 semaines), stockage séparé, bandeau : valider tout, +1 jour, +1 semaine, jouer 1 semaine. Depuis l'écran Personnage.
 - **Questions ouvertes** · Question · À explorer

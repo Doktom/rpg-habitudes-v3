@@ -1,10 +1,12 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
-	import { AudioLines, CalendarDays, Ellipsis, Flag, ListTodo, NotebookPen, NotebookTabs, Orbit, Repeat, Rocket, Sun, UserRound, X } from '@lucide/svelte';
+	import { onMount, untrack } from 'svelte';
+	import { AudioLines, CalendarDays, Cloud, CloudOff, Ellipsis, Flag, ListTodo, NotebookPen, NotebookTabs, Orbit, Repeat, Rocket, Settings2, Sun, UserRound, X } from '@lucide/svelte';
 	import LevelRing from '#lib/components/LevelRing.svelte';
 	import LootLine from '#lib/components/LootLine.svelte';
+	import MomentOverlay from '#lib/components/MomentOverlay.svelte';
+	import Tutorial from '#lib/components/Tutorial.svelte';
 	import TestBanner from '#lib/components/TestBanner.svelte';
 	import ThemeSwitch from '#lib/components/ThemeSwitch.svelte';
 	import Toasts from '#lib/components/Toasts.svelte';
@@ -13,6 +15,8 @@
 	import { levelInfo } from '#lib/engine/xp.ts';
 	import { store } from '#lib/store.svelte.ts';
 	import { theme } from '#lib/theme.svelte.ts';
+	import { push } from '#lib/sync/push.svelte.ts';
+	import { sync } from '#lib/sync/sync.svelte.ts';
 	import { SHIP_NAME } from '#lib/universe.ts';
 
 	let { children } = $props();
@@ -27,17 +31,18 @@
 		review: { href: '#/revue', label: 'Revue', icon: NotebookPen },
 		pilot: { href: '#/personnage', label: 'Pilote', icon: UserRound },
 		habits: { href: '#/habitudes', label: 'Habitudes', icon: Repeat },
-		dance: { href: '#/danse', label: 'Danse', icon: AudioLines }
+		dance: { href: '#/danse', label: 'Danse', icon: AudioLines },
+		settings: { href: '#/reglages', label: 'Réglages', icon: Settings2 }
 	};
 
 	const groups = [
 		{ label: 'Bord', items: [ITEMS.today, ITEMS.tasks, ITEMS.planning, ITEMS.notebook] },
 		{ label: 'Voyage', items: [ITEMS.ship, ITEMS.campaigns, ITEMS.review] },
-		{ label: 'Pilote', items: [ITEMS.pilot, ITEMS.habits, ITEMS.dance] }
+		{ label: 'Pilote', items: [ITEMS.pilot, ITEMS.habits, ITEMS.dance, ITEMS.settings] }
 	];
 	// Sur mobile : quatre écrans principaux dans la barre, le reste dans « Plus ».
 	const primary = [ITEMS.today, ITEMS.tasks, ITEMS.ship, ITEMS.pilot];
-	const secondary = [ITEMS.planning, ITEMS.notebook, ITEMS.campaigns, ITEMS.review, ITEMS.habits, ITEMS.dance];
+	const secondary = [ITEMS.planning, ITEMS.notebook, ITEMS.campaigns, ITEMS.review, ITEMS.habits, ITEMS.dance, ITEMS.settings];
 
 	// Routage par hash (#/planning…) pour fonctionner sur n'importe quel hébergement statique.
 	const active = (href: string) => page.route.id === href.slice(1);
@@ -49,9 +54,18 @@
 
 	let moreOpen = $state(false);
 
+	// État de l'appareil pour les missions de prise en main (synchro, rappels, installation).
+	$effect(() => {
+		const device = { signedIn: !!sync.user, subscribed: push.subscribed, installed: push.installed };
+		untrack(() => store.setDevice(device));
+	});
+
 	onMount(() => {
 		store.rollover();
+		store.initMoments();
 		theme.apply();
+		push.init();
+		sync.init();
 		// L'app est prête : on retire l'écran de chargement posé par app.html.
 		const splash = document.getElementById('splash');
 		if (splash) {
@@ -67,6 +81,8 @@
 
 <TestBanner />
 <Toasts />
+<Tutorial />
+<MomentOverlay />
 
 <div class="min-h-screen md:flex">
 	<aside class="sticky top-0 hidden h-screen w-60 shrink-0 flex-col gap-5 border-r border-line bg-surface/70 p-4 backdrop-blur md:flex">
@@ -155,7 +171,7 @@
 			<span class="eyebrow">Autres écrans</span>
 			<button class="btn btn-ghost h-8 w-8 p-0" aria-label="Fermer" onclick={() => (moreOpen = false)}><X size={18} /></button>
 		</div>
-		<div class="grid grid-cols-3 gap-2">
+		<div class="grid grid-cols-4 gap-2">
 			{#each secondary as item (item.href)}
 				<a
 					href={item.href}

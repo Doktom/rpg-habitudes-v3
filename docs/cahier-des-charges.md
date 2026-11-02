@@ -121,6 +121,7 @@ La V3 (dépôt `rpg-habitudes-v3`, à partir de la V2 au tag `v0.2-base`) s'appu
 - **Modèles de campagnes** : Douze livres dans l'année, Une maison qui respire, Déco, Remise en forme en 12 semaines, Passer un cap en danse, Trading : le process avant le profit, Des matins qui démarrent bien ; étapes, quêtes, boss final et arrivée visée. La campagne Trading de départ reçoit ses quêtes si elle était vide.
 - **Revue** : « Si cet obstacle revient, alors je… » après « Ce qui a coincé ».
 - **Aujourd'hui** : l'action d'abord (copilote, joker, journée complète, habitudes, tâches), la vue d'ensemble (orbite, jauges) ensuite.
+- **Aujourd'hui (V3.1)** refait en tableau de bord compartimenté : un poste de pilotage en tête (date, secteur, anneau de la journée obligations + bonus, statut en une phrase, mode minimum, repos, boucliers, les sept secteurs cliquables) ; les transmissions (joker, copilote) ; le guide des premiers jours ; puis deux colonnes : les missions par moment (Matin, Journée, Soir, chacun replié une fois terminé) et la colonne de bord (À faire, séries avec la jauge vers le prochain palier, état du vaisseau, journal de bord replié).
 - **Cohérence** : la récompense de fin de campagne profite de la Discipline comme les quêtes et les étapes.
 
 ## Habitudes, routines et programmes
@@ -219,6 +220,10 @@ La revue hebdo (dimanche, environ 10 min) et la revue mensuelle sont des parcour
 
 **Revue mensuelle** : même trame sur le mois, plus le point sur chaque campagne (chapitre en cours, prochaine étape, pause ou reprise), l'évolution des stats et le choix de l'arc du mois suivant.
 
+**V3.1 (02/11/2026)** : la revue mensuelle est un **récit**, pas un tableau de chiffres (onglet « Mois » de l'écran Revue). Le conteur de bord (`engine/story.ts`) écrit la chronique du mois en chapitres : Le départ (niveau, comparaison au mois d'avant), La route (taux tenu, habitude la plus fiable, plus longue série), Les épreuves (la semaine la plus dure racontée comme une traversée, l'habitude qui résiste, boucliers, repos ; toujours bienveillant), Les trouvailles (paliers, trophées, campagnes, boss, tâches), Le chantier, Le pilote (la stat qui a le plus grandi), un épilogue et un titre d'arc (« Le mois de la Forge », « Le mois des vents contraires »…). Puis « Ton regard » (fierté, ce que je laisse, l'arc du mois prochain, 3 intentions qui vont dans « Ce mois ») et « Clore le chapitre » (+150 XP, butin), possible à partir des trois derniers jours du mois ; les dix premiers jours, la revue porte sur le mois précédent.
+
+**Moments racontés** : un palier de série (7, 14, 30, 60, 100, 200, 365 jours), une semaine sans faille, 4 / 8 / 12 / 26 / 52 semaines pleines d'affilée, un trophée, un niveau, un chapitre, un boss, une campagne, une nouvelle classe de vaisseau, et la fin d'une série de 7 jours ou plus (racontée avec douceur : « ne pas rater deux fois ») s'affichent en plein écran, une fois chacun, avec un texte dans l'univers. Les moments déjà passés à l'import ne sont pas rejoués.
+
 Les réponses sont archivées et consultables : elles forment un journal de bord.
 
 ## Notifications
@@ -232,6 +237,14 @@ Notifications push via la PWA, toutes désactivables une par une.
 - Plage silencieuse configurable (ex. 23 h – 7 h).
 
 Sur iPhone, les notifications nécessitent d'installer l'app sur l'écran d'accueil ; Android et PC fonctionnent directement.
+
+**V3.1 (02/11/2026)** : rappels push envoyés par une fonction Supabase (`supabase/functions/send-reminders`, appelée toutes les 10 minutes), à partir des données synchronisées : routines du matin, de mi-journée et du soir (seulement s'il en reste), bilan avant la nuit (obligations restantes et série en jeu), revue du dimanche (si pas faite), récit du mois (dernier jour). Chaque rappel a son heure et se coupe dans Réglages ; rien n'est envoyé s'il n'y a rien à dire. Bouton « Tester ». Mise en place : `docs/supabase.md`.
+
+## Prise en main (V3.1)
+
+- **Tutoriel** au premier lancement, six écrans illustrés avec les vrais composants (le vaisseau, un palier à essayer, les jauges, l'orbite) ; rejouable depuis Réglages.
+- **Guide des premiers jours** (« Brevet de pilote ») sur Aujourd'hui : 12 missions débloquées jour après jour (jour 1 : valider une routine, ajuster ses habitudes, livrer un colis ; jour 2 : synchro, installation, rappels ; jour 3 : palier minimum, journée complète, 3 jours d'affilée ; jour 5 : première réparation, une quête ; jour 7 : première revue). Chacune se valide toute seule et rapporte un petit butin (`engine/onboarding.ts`). Masquable.
+- **Astuce de première visite** sur chaque écran, une fois, jusqu'à « Compris ».
 
 ## Écrans
 
