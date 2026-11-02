@@ -130,13 +130,36 @@ const CORS = {
 	'Access-Control-Allow-Headers': 'authorization, apikey, content-type, x-client-info'
 };
 
+// Clé serveur : ancienne clé service_role, ou nouvelle clé secrète (sb_secret_…) selon le projet.
+function serverKey(): string {
+	const legacy = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+	if (legacy) return legacy;
+	try {
+		const keys = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') ?? '{}') as Record<string, string>;
+		return keys.default ?? Object.values(keys)[0] ?? '';
+	} catch {
+		return '';
+	}
+}
+
 Deno.serve(async (req) => {
 	if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
-	webpush.setVapidDetails(Deno.env.get('VAPID_SUBJECT') ?? 'mailto:admin@example.com', Deno.env.get('VAPID_PUBLIC_KEY')!, Deno.env.get('VAPID_PRIVATE_KEY')!);
-	const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+	try {
+		return await handle(req);
+	} catch (e) {
+		// Message d'erreur sans secret, pour comprendre depuis les journaux ou le bouton Tester.
+		console.error(e);
+		return Response.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500, headers: CORS });
+	}
+});
+
+async function handle(req: Request): Promise<Response> {
+	for (const k of ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'CRON_SECRET']) if (!Deno.env.get(k)?.trim()) throw new Error(`Secret manquant : ${k}`);
+	webpush.setVapidDetails(Deno.env.get('VAPID_SUBJECT')?.trim() || 'mailto:admin@example.com', Deno.env.get('VAPID_PUBLIC_KEY')!.trim(), Deno.env.get('VAPID_PRIVATE_KEY')!.trim());
+	const db = createClient(Deno.env.get('SUPABASE_URL')!, serverKey());
 
 	// Bouton « Tester » des Réglages : l'utilisateur connecté reçoit une notification sur tous ses appareils.
-	const secret = Deno.env.get('CRON_SECRET');
+	const secret = Deno.env.get('CRON_SECRET')?.trim();
 	if (!secret || req.headers.get('x-cron-secret') !== secret) {
 		const token = req.headers.get('authorization')?.replace(/^Bearer /, '') ?? '';
 		const { data: auth } = await db.auth.getUser(token);
@@ -195,4 +218,4 @@ Deno.serve(async (req) => {
 	// Ménage : on ne garde que deux semaines de journal.
 	await db.from('reminder_log').delete().lt('sent_at', new Date(Date.now() - 14 * 86_400_000).toISOString());
 	return Response.json({ users: users.length, sent });
-});
+}
