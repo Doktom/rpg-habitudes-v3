@@ -436,7 +436,7 @@
 								{#if streak >= 2}<span class="chip bg-orange-100 text-orange-800"><Flame size={10} />{streak}{h.frequency.type === 'weekly' ? ' sem.' : ''}</span>{/if}
 							</div>
 							<div class="text-xs text-muted">
-								{#if h.cue}<span class="font-semibold text-ink">{h.cue}</span> · {/if}{freqLabel(h)} · {DIFFICULTY_LABEL[h.difficulty]}
+								{#if h.cue}<span class="font-semibold text-ink">{h.cue}</span>{' · '}{/if}{freqLabel(h)} · {DIFFICULTY_LABEL[h.difficulty]}
 								{#if h.form === 'routine'}· {h.routine?.at(-1)?.exercises.length ?? 0} exercice(s){/if}
 								{#if h.form === 'program'}· {(h.sessions ?? []).join(', ')}{/if}
 							</div>

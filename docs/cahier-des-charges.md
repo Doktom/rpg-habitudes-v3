@@ -111,6 +111,18 @@ Le détail (lore, tables de butin, coûts, effets, trophées) est dans `docs/uni
 
 Le mode test génère un scénario complet (habitudes, danse, tâches, campagnes avec quêtes et boss) et joue 4 semaines. Il vit dans son propre stockage : les vraies données ne sont jamais modifiées. Un bandeau permet ensuite de **valider tout aujourd'hui**, d'avancer d'**1 jour** ou d'**1 semaine** (les jours passés sont clôturés comme en vrai, avec leurs ratés), de **jouer 1 semaine** automatiquement, ou de quitter. Lancé depuis l'écran Personnage.
 
+## V3 : ce qui marche pour tenir des habitudes
+
+La V3 (dépôt `rpg-habitudes-v3`, à partir de la V2 au tag `v0.2-base`) s'appuie sur la synthèse `docs/recherche-motivation.md`. Chaque mécanique y est reliée à un principe solide (commencer petit, intentions de mise en œuvre, progrès visibles, pas de punition, ne pas rater deux fois, nouveaux départs, prévoir les obstacles, pas trop à la fois, repos).
+
+- **Déclencheur par habitude** (« Quand / après… ») : affiché sur la carte du jour et dans Habitudes, avec des suggestions ; une habitude sans déclencheur reçoit une astuce.
+- **Copilote** sur Aujourd'hui : au plus deux conseils du jour, écartables jusqu'au lendemain. Règles : ne pas rater deux fois (avec le palier minimum), série à un jour d'un palier, journée presque complète, revue de la semaine (dimanche à mardi), nouveau départ le lundi après une semaine sous 60 %, habitude qui coince (moins de 40 % sur 14 jours : déclencheur, minimum ou bonus), trop d'obligations (plus de 8), pause conseillée (14 jours sans repos et Motivation sous 45), campagne au point mort depuis 7 jours, bouclier en vue.
+- **Habitudes** : nouvelles habitudes en bonus par défaut ; catalogue de 12 idées à essayer (lecture, ménage, prendre l'air, boire de l'eau, trois mercis, pas d'écran au lit, étirements, marcher, pratique danse, apprendre, préparer demain, journal de trading), chacune avec un palier minimum minuscule et un déclencheur ; réussite sur 4 semaines, série et semaine en pastilles pour chaque habitude.
+- **Modèles de campagnes** : Douze livres dans l'année, Une maison qui respire, Déco, Remise en forme en 12 semaines, Passer un cap en danse, Trading : le process avant le profit, Des matins qui démarrent bien ; étapes, quêtes, boss final et arrivée visée. La campagne Trading de départ reçoit ses quêtes si elle était vide.
+- **Revue** : « Si cet obstacle revient, alors je… » après « Ce qui a coincé ».
+- **Aujourd'hui** : l'action d'abord (copilote, joker, journée complète, habitudes, tâches), la vue d'ensemble (orbite, jauges) ensuite.
+- **Cohérence** : la récompense de fin de campagne profite de la Discipline comme les quêtes et les étapes.
+
 ## Habitudes, routines et programmes
 
 Trois objets récurrents couvrent tous les cas : l'habitude simple, la routine (liste d'exercices) et l'objectif de fréquence lié à un programme.

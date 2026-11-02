@@ -156,24 +156,6 @@
 	</div>
 </header>
 
-<!-- Orbite et jauges -->
-<div class="mb-4 grid gap-4 lg:grid-cols-5">
-	<section class="card lg:col-span-3">
-		<div class="mb-1 flex items-baseline justify-between gap-2">
-			<h2 class="font-extrabold">Orbite de la semaine</h2>
-			<a href="#/vaisseau" class="text-xs font-semibold text-accent hover:underline">Vaisseau</a>
-		</div>
-		<OrbitRing {sectors} current={date} />
-		<p class="text-xs text-muted">
-			<strong class="text-ink">{sectorsLit(sectors)}/7</strong> secteurs allumés · à l'amarrage du dimanche :
-			<span class="text-ink"><LootLine loot={orbitReward(data, sectors)} signed size={11} /></span>
-		</p>
-	</section>
-	<section class="card lg:col-span-2">
-		<Gauges discipline={disc} {motivation} {inspiration} stacked />
-	</section>
-</div>
-
 <!-- Réglages du jour -->
 <div class="mb-6 flex flex-wrap items-center gap-2">
 	<button class="btn text-xs {minimumMode ? 'border-accent bg-accent-soft' : ''}" aria-pressed={minimumMode} onclick={() => store.toggleMinimumMode(date)}>
@@ -497,6 +479,24 @@
 		</div>
 	</div>
 </section>
+
+<!-- Orbite et jauges -->
+<div class="mb-6 grid gap-4 lg:grid-cols-5">
+	<section class="card lg:col-span-3">
+		<div class="mb-1 flex items-baseline justify-between gap-2">
+			<h2 class="font-extrabold">Orbite de la semaine</h2>
+			<a href="#/vaisseau" class="text-xs font-semibold text-accent hover:underline">Vaisseau</a>
+		</div>
+		<OrbitRing {sectors} current={date} />
+		<p class="text-xs text-muted">
+			<strong class="text-ink">{sectorsLit(sectors)}/7</strong> secteurs allumés · à l'amarrage du dimanche :
+			<span class="text-ink"><LootLine loot={orbitReward(data, sectors)} signed size={11} /></span>
+		</p>
+	</section>
+	<section class="card lg:col-span-2">
+		<Gauges discipline={disc} {motivation} {inspiration} stacked />
+	</section>
+</div>
 
 <!-- Journal de bord du jour -->
 {#if dayEvents.length}

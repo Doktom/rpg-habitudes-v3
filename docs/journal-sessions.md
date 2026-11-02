@@ -2,6 +2,26 @@
 
 Entrées les plus récentes en haut.
 
+## 2026-11-02 (suite) — V3 : version complète et cohérente
+
+**Demande** : analyser ce qui marche dans le suivi d'habitudes et la motivation ; faire un gros contrôle de toute l'app (tests, cohérence, tâches) ; ajouter des campagnes et des recommandations ; sortir une version pertinente, complète et bonne, dans une V3 séparée sur GitHub.
+
+**Décisions**
+
+- V3 dans un nouveau dépôt public `Doktom/rpg-habitudes-v3`, créé à partir de la V2 figée au tag `v0.2-base` (historique complet). Stockage propre (`rpg-habitudes-v3:*`), import en lecture seule des données V2 (ou V0) au premier lancement. Site : https://doktom.github.io/rpg-habitudes-v3/.
+- Synthèse de recherche `docs/recherche-motivation.md` : 13 principes, chacun relié à ce que fait l'app ; garde-fou pour toute nouvelle mécanique.
+- Ajouts : copilote, déclencheurs, catalogue d'habitudes, 7 modèles de campagnes, « si… alors… » dans la revue (détail dans le cahier des charges, section « V3 »).
+- Aujourd'hui : l'orbite et les jauges passent sous les tâches, pour que l'action soit en haut sur mobile.
+
+**Contrôle**
+
+- Code relu (store, moteur, écrans). Corrigé : la fin de campagne n'appliquait pas la Discipline ; le copilote annonçait une série « à un jour du palier » le lendemain d'un oubli ; espace manquante après le déclencheur.
+- Tests : 29 → 47, dont 13 parcours de bout en bout sur le store (valider / décocher, journée complète et parfaite, trophée, clôture des jours, boucliers proposés / utilisés / refusés / fabriqués, tâche, campagne modèle jouée jusqu'au bout, revue, catalogue, versement unique des contenus, import de données V2) et 5 sur le copilote.
+- Navigateur, mode test : les dix écrans à 1 280 px et 375 px, sans erreur console ni débordement ; catalogue (ajout d'une idée), création d'habitude avec déclencheur, modèle de campagne, champ « si… alors… », copilote affiché.
+- Écran Habitudes refait au système de design ; en-tête de Danse aligné.
+
+**Prochaine étape** : utiliser la V3 au quotidien, puis calibrer ; ensuite Supabase et la PWA.
+
 ## 2026-11-02 (suite) — V2 : écran Revue
 
 **Réalisé**

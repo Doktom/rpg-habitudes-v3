@@ -8,25 +8,26 @@ Ce dépôt (`Doktom/rpg-habitudes-v3`) est la **V3** : la V2 graphique, rendue c
 
 - **Base** : dépôt `Doktom/rpg-habitudes-v2`, tag `v0.2-base` (historique conservé ici, V0 comprise). La V2 reste en ligne et n'est plus modifiée, sauf correctif.
 - **Stockage** : V0, V2 et V3 sont sur le même domaine (doktom.github.io) et partagent le localStorage. La V3 a ses propres clés (`rpg-habitudes-v3:*`) et importe en lecture seule, au premier lancement, les données V2 (`rpg-habitudes-v2:data`), ou V0 à défaut. Ne jamais écrire dans les clés des autres versions.
+- **Copilote** : `src/lib/engine/copilot.ts` (règles pures et testées, chacune reliée à un principe de la synthèse ; priorité, conseils écartables pour la journée via `dismissedTips`). Ajouter une règle = un test dans `copilot.test.ts`.
+- **Contenus prêts à l'emploi** : `src/lib/templates.ts` (`HABIT_IDEAS`, `CAMPAIGN_TEMPLATES`) ; les versements aux données existantes passent par `addContent` (`CONTENT_VERSION` = 3).
 - **Principes de conception** : toute nouvelle mécanique s'appuie sur un principe de `docs/recherche-motivation.md` et n'en contredit aucun (pas de punition, choix laissé à l'utilisateur, progrès visibles, commencer petit).
 
 ## Démarrer une session
 
 0. `git pull` : le travail a pu avancer sur un autre PC (voir « Travailler sur plusieurs PC »).
 1. Lire la carte mentale (voir « Carte mentale : outil de pilotage »), puis l'entrée la plus récente de `docs/journal-sessions.md` et `docs/cahier-des-charges.md`.
-2. `npm install` puis `npm test` (29 tests attendus au vert) et `npm run dev`.
+2. `npm install` puis `npm test` (47 tests attendus au vert, dont les parcours de bout en bout de `src/lib/store.test.ts`) et `npm run dev`.
 3. Si le doc partagé Claude Docs n'est pas accessible, `docs/cahier-des-charges.md` fait foi.
 
-**État au 02/11/2026** : refonte graphique en cours ; système de design, coque, Aujourd'hui, Vaisseau, À faire, Pilote, Planning, Campagnes et Revue refaits ; récompenses de régularité, nouvelles habitudes (lecture, ménage, prendre l'air) écran Carnet et boucliers de série ajoutés.
+**État au 02/11/2026 (V3, version 0.3.0)** : tous les écrans sont au système de design (Habitudes refait, Danse aligné) ; régularité récompensée, boucliers de série au choix, Carnet ; copilote de recommandations sur Aujourd'hui ; déclencheurs d'habitudes ; catalogue d'habitudes à essayer ; 7 modèles de campagnes ; « si… alors… » dans la revue. Aujourd'hui met l'action d'abord (copilote, joker, journée, habitudes, tâches), l'orbite et les jauges ensuite.
 
 **Prochaines étapes, par ordre de priorité**
 
-1. Refonte graphique, écran par écran (système de design, coque, Aujourd'hui, Vaisseau, À faire, Pilote, Planning, Campagnes et Revue faits ; restent Habitudes, Danse).
-2. Retours d'usage réel de la V0 (corrections, calibrage des valeurs d'XP et de jauges dans `src/lib/config.ts`), à reporter ici.
-3. Supabase : auth + tables du modèle de données, en remplacement de `load`/`persist` dans `store.svelte.ts` ; import du JSON exporté depuis la V0.
-4. PWA installable + notifications (rappels d'habitudes, revue du dimanche).
-5. Vue mois du planning, revue mensuelle et arcs.
-6. V2 : Élan, hauts faits, mode guidé des routines avec minuteur, carte de progression des campagnes, intégration de l'app salle.
+1. Usage réel de la V3 quelques semaines, puis calibrage (`REGULARITY`, `SHIELD`, règles du copilote) et retours à reporter ici.
+2. Supabase : auth + tables du modèle de données, en remplacement de `load`/`persist` dans `store.svelte.ts` ; synchro entre téléphone et PC.
+3. PWA installable + rappels au moment du déclencheur choisi, revue du dimanche.
+4. Revue mensuelle (point campagnes, évolution des stats, arc du mois), vue mois du planning.
+5. Pistes de `docs/recherche-motivation.md` : titres du pilote gagnés par les séries, petites trouvailles surprises, Élan, mode guidé des routines avec minuteur, intégration de l'app salle.
 
 Questions encore ouvertes : nom de l'app et des stats, habitudes de trading détaillées, chapitres réels des campagnes Trading et Maison, stack de l'app salle.
 
@@ -71,7 +72,7 @@ La carte mentale est l'outil de pilotage du projet et l'interface d'échange ave
 - Trading : on récompense le processus, jamais le P&L.
 - V2 : beau et doux, dans l'univers spatial, sans perdre la lisibilité.
 
-## Système de design (V2)
+## Système de design
 
 - **Thèmes** : Nuit douce (sombre, par défaut) et Aube orbitale (clair), plus « automatique ». Jetons dans `src/app.css` (`--page`, `--surface`, `--raised`, `--line`, `--ink`, `--muted`, `--accent`, `--reward`, `--done`, `--g-*` pour les jauges) et classes Tailwind associées (`bg-surface`, `text-muted`, `bg-accent-soft`…). Choix du thème : `src/lib/theme.svelte.ts`, appliqué avant l'affichage par le script de `src/app.html`.
 - **Écrire les écrans avec les jetons** (`bg-surface`, `text-ink`, `text-muted`, `border-line`, `bg-accent`…) plutôt qu'avec des couleurs Tailwind. La palette `zinc` est rebranchée sur la rampe neutre du thème, et les teintes d'accent ont une version sombre générée par `node scripts/gen-dark-hues.mjs` (`src/theme-hues-dark.css`) : ajouter une teinte là si un écran en utilise une nouvelle. Pas de `bg-white`/`text-white`.
