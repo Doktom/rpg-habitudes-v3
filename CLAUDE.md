@@ -38,7 +38,11 @@ L'utilisateur travaille sur plusieurs PC. GitHub est la seule source de vérité
 - **Début de session** : `git pull`, puis `npm install` si `package-lock.json` a changé.
 - **Fin de session** : journal à jour (section « Prochaine étape » précise, avec ce qui est en cours), « État » et « Prochaines étapes » ci-dessus à jour, commit et `git push`. Ne jamais laisser de travail non poussé : l'autre PC ne le verrait pas.
 - Un travail inachevé se pousse quand même, sur une branche, en le signalant dans le journal.
-- Premier lancement sur un nouveau PC : `git clone https://github.com/Doktom/rpg-habitudes-v2.git`, puis Node.js 22+ et `npm install`. Éviter de cloner dans un dossier synchronisé (OneDrive) : la synchro de `.git` et `node_modules` peut créer des conflits.
+- Premier lancement sur un nouveau PC : `git clone https://github.com/Doktom/rpg-habitudes-v3.git`, puis Node.js 22+ et `npm install`. Éviter de cloner dans un dossier synchronisé (OneDrive) : la synchro de `.git` et `node_modules` peut créer des conflits.
+- Pour reprendre avec Claude : ouvrir une session dans le dossier cloné et dire « reprenons le travail sur ce projet ». Claude lit ce fichier, puis l'entrée la plus récente de `docs/journal-sessions.md` (ce qui est fait, ce qui reste), le cahier des charges et `docs/recherche-motivation.md`.
+- Vérifier ensuite : `npm test` (47 tests au vert), `npm run check`, `npm run dev`. Le serveur de dev est aussi décrit dans `.claude/launch.json` (aperçu dans le navigateur de Claude).
+- La carte mentale (artifact claude.ai) n'est accessible que depuis le compte qui l'a créée ; depuis un autre compte, `docs/carte-mentale.md` fait foi.
+- Dépôts : **V3** (celui-ci) = travail en cours ; V2 (`rpg-habitudes-v2`, tag `v0.2-base`) et V0 (`rpg-habitudes`) sont figés, corrigés seulement en cas de bug.
 
 ## Documents de référence
 
