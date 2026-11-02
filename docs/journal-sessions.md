@@ -26,7 +26,9 @@ Entrées les plus récentes en haut.
 
 **Pas vérifié** : service worker, installation et push (le navigateur intégré de Claude refuse les service workers) ; synchro réelle (projet Supabase pas encore créé).
 
-**Prochaine étape** : créer le projet Supabase en suivant `docs/supabase.md`, puis tester sur le Redmi : compte, installation, rappels (« Tester »), synchro PC ↔ téléphone.
+**Suite (03/11, nuit)** : projet Supabase créé et configuré (`ihqmeozeyzsihzjvjsgk`) : schéma, Site URL et redirections, fonction déployée depuis le tableau de bord (erreurs désormais lisibles, clé serveur des nouveaux projets gérée), secrets, cron. Appel manuel de la fonction : `{"users":0,"sent":0}`. Variables du dépôt posées, site redéployé avec la config.
+
+**Prochaine étape** : tester sur le Redmi : compte, installation, rappels (« Tester »), synchro PC ↔ téléphone.
 
 ## 2026-11-02 (suite) — V3 : version complète et cohérente
 
