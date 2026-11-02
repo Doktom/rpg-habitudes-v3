@@ -50,7 +50,7 @@
 	} as const;
 	type IconKey = keyof typeof ICONS;
 	const COLORS = ['#16a34a', '#b45309', '#9333ea', '#0284c7', '#4f46e5', '#e11d48', '#ea580c', '#0d9488'];
-	const LAST_KEY = 'rpg-habitudes-v2:carnet';
+	const LAST_KEY = 'rpg-habitudes-v3:carnet';
 
 	const data = $derived(store.data);
 	const lists = $derived([...data.notebook].sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned)));

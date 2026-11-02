@@ -2,13 +2,13 @@
 
 Webapp perso de suivi d'habitudes, planification hebdo/mensuelle et projets au long cours, avec une couche RPG (stats, XP, jauges Discipline / Motivation / Inspiration, campagnes) dans un univers spatial (le Sillage, `docs/univers.md`). Langue du projet : français.
 
-## Ce dépôt : la V2 graphique
+## Ce dépôt : la V3
 
-Ce dépôt (`Doktom/rpg-habitudes-v2`) est la **V2** : mêmes mécaniques que la V0, avec une grosse refonte de l'UI et de l'UX, belle et douce, dans l'univers spatial.
+Ce dépôt (`Doktom/rpg-habitudes-v3`) est la **V3** : la V2 graphique, rendue complète et cohérente, appuyée sur ce qui marche vraiment pour tenir des habitudes (`docs/recherche-motivation.md`) : copilote de recommandations, déclencheurs d'habitudes, modèles de campagnes, tests de bout en bout.
 
-- **Base** : dépôt `Doktom/rpg-habitudes`, tag `v0.1-base` (historique conservé ici). La V0 reste en ligne et n'est plus modifiée, sauf correctif.
-- **Mécaniques** : `src/lib/engine/`, `config.ts`, `universe.ts` et le store sont la base fonctionnelle. Les garder identiques sauf décision explicite ; la refonte porte sur les écrans, les composants et le style.
-- **Stockage** : la V2 est sur le même domaine que la V0 (doktom.github.io), donc partage le localStorage. Elle a ses propres clés (`rpg-habitudes-v2:*`) et importe en lecture seule les données V0 au premier lancement. Ne jamais écrire dans les clés `rpg-habitudes:*`.
+- **Base** : dépôt `Doktom/rpg-habitudes-v2`, tag `v0.2-base` (historique conservé ici, V0 comprise). La V2 reste en ligne et n'est plus modifiée, sauf correctif.
+- **Stockage** : V0, V2 et V3 sont sur le même domaine (doktom.github.io) et partagent le localStorage. La V3 a ses propres clés (`rpg-habitudes-v3:*`) et importe en lecture seule, au premier lancement, les données V2 (`rpg-habitudes-v2:data`), ou V0 à défaut. Ne jamais écrire dans les clés des autres versions.
+- **Principes de conception** : toute nouvelle mécanique s'appuie sur un principe de `docs/recherche-motivation.md` et n'en contredit aucun (pas de punition, choix laissé à l'utilisateur, progrès visibles, commencer petit).
 
 ## Démarrer une session
 
@@ -95,9 +95,10 @@ La carte mentale est l'outil de pilotage du projet et l'interface d'échange ave
 
 `npm run dev` · `npm test` · `npm run check` · `npm run build` · `npm run build:artifact`
 
-Sous Windows avec Git Bash, tester le build GitHub Pages avec `MSYS_NO_PATHCONV=1 BASE_PATH=/rpg-habitudes-v2 npm run build` (sinon le chemin est converti en chemin Windows).
+Sous Windows avec Git Bash, tester le build GitHub Pages avec `MSYS_NO_PATHCONV=1 BASE_PATH=/rpg-habitudes-v3 npm run build` (sinon le chemin est converti en chemin Windows).
 
 ## En ligne
 
-- Site public V2 : https://doktom.github.io/rpg-habitudes-v2/ — déployé automatiquement par GitHub Actions à chaque push sur `main` (le build reçoit `BASE_PATH=/rpg-habitudes-v2`, tiré du nom du dépôt). Le dépôt est public : ne jamais y mettre de secrets ni de données personnelles.
+- Site public V3 : https://doktom.github.io/rpg-habitudes-v3/ — déployé automatiquement par GitHub Actions à chaque push sur `main` (le build reçoit `BASE_PATH=/rpg-habitudes-v3`, tiré du nom du dépôt).
+- V2 (figée, tag `v0.2-base`) : https://doktom.github.io/rpg-habitudes-v2/. Le dépôt est public : ne jamais y mettre de secrets ni de données personnelles.
 - V0 (base, figée) : https://doktom.github.io/rpg-habitudes/.

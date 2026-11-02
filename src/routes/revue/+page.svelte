@@ -112,7 +112,7 @@
 	let adjust = $state('');
 	let priorities = $state(['', '', '']);
 	let focusQuest = $state('');
-	const draftKey = $derived(`rpg-habitudes-v2:revue:${weekStart}`);
+	const draftKey = $derived(`rpg-habitudes-v3:revue:${weekStart}`);
 
 	onMount(() => {
 		try {

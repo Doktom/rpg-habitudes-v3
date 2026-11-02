@@ -108,7 +108,7 @@
 
 		<div class="flex items-center justify-between gap-2 px-1">
 			<ThemeSwitch />
-			<span class="text-[10px] font-semibold text-muted">V2</span>
+			<span class="text-[10px] font-semibold text-muted">V3</span>
 		</div>
 	</aside>
 

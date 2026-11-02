@@ -2,7 +2,7 @@
 // Le script de app.html applique le thème avant l'affichage pour éviter un flash ; ce module le change ensuite.
 export type ThemePref = 'dark' | 'light' | 'auto';
 
-const KEY = 'rpg-habitudes-v2:theme';
+const KEY = 'rpg-habitudes-v3:theme';
 
 function read(): ThemePref {
 	try {

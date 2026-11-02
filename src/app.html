@@ -11,7 +11,7 @@
 			(function () {
 				var pref = 'dark';
 				try {
-					pref = localStorage.getItem('rpg-habitudes-v2:theme') || 'dark';
+					pref = localStorage.getItem('rpg-habitudes-v3:theme') || 'dark';
 				} catch (e) {}
 				var mode = pref === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : pref;
 				document.documentElement.dataset.theme = mode === 'light' ? 'light' : 'dark';

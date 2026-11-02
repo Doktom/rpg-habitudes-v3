@@ -36,11 +36,13 @@ import type {
 
 // V0 : tout est stocké dans le navigateur (localStorage). La couche Supabase remplacera load/persist.
 // Le mode test a son propre stockage : les vraies données ne sont jamais touchées.
-// La V2 partage le domaine (et donc le stockage) de la V1 : clés à elle, et import en lecture seule des données V1.
-const KEY = 'rpg-habitudes-v2:data';
-const TEST_KEY = 'rpg-habitudes-v2:test';
-const MODE_KEY = 'rpg-habitudes-v2:mode';
-const V1_KEY = 'rpg-habitudes:v1';
+// La V3 partage le domaine (et donc le stockage) des V0 et V2 : clés à elle, et import en lecture seule
+// des données V2 au premier lancement (ou V0 à défaut). Ne jamais écrire dans les clés des autres versions.
+const KEY = 'rpg-habitudes-v3:data';
+const TEST_KEY = 'rpg-habitudes-v3:test';
+const MODE_KEY = 'rpg-habitudes-v3:mode';
+const V2_KEY = 'rpg-habitudes-v2:data';
+const V0_KEY = 'rpg-habitudes:v1';
 
 export { uid };
 
@@ -59,7 +61,7 @@ function readTestMode(): boolean {
 
 function load(test: boolean): AppData {
 	try {
-		const raw = localStorage.getItem(storageKey(test)) ?? (test ? null : localStorage.getItem(V1_KEY));
+		const raw = localStorage.getItem(storageKey(test)) ?? (test ? null : (localStorage.getItem(V2_KEY) ?? localStorage.getItem(V0_KEY)));
 		if (raw) {
 			const data = withDefaults(JSON.parse(raw) as AppData);
 			if (test) setClock(data.testClock ?? null);
