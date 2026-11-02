@@ -47,6 +47,8 @@ L'utilisateur travaille sur plusieurs PC. GitHub est la seule source de vérité
 ## Documents de référence
 
 - `docs/cahier-des-charges.md` : cahier des charges, source de vérité du produit.
+- `docs/brief-technique.md` : tout le fonctionnement de l'app (architecture, données, mécaniques, contenus, textes), sans le graphisme ; sert de brief pour la version 3D (`Doktom/rpg-habitudes-3d`).
+- `.claude/memoire/` : copie des notes de Claude sur le projet, pour reprendre depuis n'importe quel PC.
 - Doc partagé (Claude Docs) : https://claude.ai/artifact/C8zL86y6JnbN2dSHobDbAi — même contenu, version éditable et commentable.
 - `docs/journal-sessions.md` : journal des sessions de travail avec Claude.
 - **Carte mentale** des modules et mécaniques : https://claude.ai/artifact/Bq2ySz5W8oPtYHMQpmxQz9 (source : `tools/carte-mentale.html`). Les nœuds vivent dans la base de l'artifact, collection `nodes` (champs `label`, `parent`, `kind` module|mecanique|idee|question, `status` en-place|prevu|a-explorer|abandonne, `note`, `order`). Claude les lit et les écrit avec l'outil ArtifactData. `docs/carte-mentale.md` en est une copie lisible.
